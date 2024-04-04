@@ -18,10 +18,10 @@ namespace Natech.BussinessLayer
         private readonly ICommunicationService _communicationService;
         private readonly IRepository<Batch> _repository;
         private readonly ILogger<GeolocationManager> _logger;
-
         private readonly IServiceProvider _serviceProvider;
 
         private readonly GeolocationConfig _geolocationConfig;
+
         public GeolocationManager(ICommunicationService communicationService,
             IRepository<Batch> repository, IConfiguration configuration, ILogger<GeolocationManager> logger, IServiceProvider serviceProvider)
         {
