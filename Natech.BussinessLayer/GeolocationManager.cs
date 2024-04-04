@@ -1,28 +1,35 @@
-﻿using DataLayer.Models;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Natech.BussinessLayer.Interfaces;
 using Natech.BussinessLayer.Models;
 using Natech.Common.Extensions;
 using Natech.Common.Models;
 using Natech.DataLayer.Interface;
+using Natech.DataLayer.Models;
 using NatechAssignment.Models;
 using NatechAssignment.Services.Interfaces;
+using System.Text.Json;
 
 namespace Natech.BussinessLayer
 {
     public class GeolocationManager : IGeolocationManager
     {
         private readonly ICommunicationService _communicationService;
-        private readonly IRepository<Geolocation> _repository;
+        private readonly IRepository<Batch> _repository;
+        private readonly ILogger<GeolocationManager> _logger;
+
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly GeolocationConfig _geolocationConfig;
-
-        private static readonly List<Batch> _batches = new List<Batch>();
-        public GeolocationManager(ICommunicationService communicationService, IRepository<Geolocation> repository, IConfiguration configuration)
+        public GeolocationManager(ICommunicationService communicationService,
+            IRepository<Batch> repository, IConfiguration configuration, ILogger<GeolocationManager> logger, IServiceProvider serviceProvider)
         {
             _communicationService = communicationService;
             _repository = repository;
+            _logger = logger;
             _geolocationConfig = configuration.GetGeolocationConfig();
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<Result<Location>> FetchGeolocation(string ip)
@@ -37,74 +44,122 @@ namespace Natech.BussinessLayer
             return Result<Location>.CreateSuccess(result.Data.Data.Geolocation);
         }
 
-        public async Task<Result<string>> BatchProcessIPs(List<string> ips)
+        public async Task<Result<int>> FetchMultipleIps(List<string> ips)
         {
-            string batchId = Guid.NewGuid().ToString();
-
-            var task = Task.Run(async () =>
+            try
             {
+                var batch = new Batch
+                {
+                    TotalItems = ips.Count,
+                    Progress = 0,
+                    StartTime = DateTime.Now
+                };
+
+                await _repository.AddAsync(batch);
+                await _repository.SaveChangesAsync();
+
+                BackgroundTask(batch, ips);
+
+                return Result<int>.CreateSuccess(batch.Id);
+            }
+            catch (Exception e)
+            {
+                return Result<int>.CreateFailure(new Error(500, e.Message));
+            }
+        }
+
+        public async Task<Result<BatchProgress>> GetBatchResult(int batchId)
+        {
+            try
+            {
+                var batch = await _repository.GetByIdAsync(batchId);
+
+                if (batch == null)
+                    return Result<BatchProgress>.CreateFailure(new Error(404, "Batch not found"));
+
+                var batchProgress = new BatchProgress
+                {
+                    ExptectedTime = batch.EstimateFinish,
+                    CompletedIps = JsonSerializer.Deserialize<List<GeolocationBatchResult>>(batch.BatchResult),
+                    Progress = GetProgressString(batch)
+                };
+
+                return Result<BatchProgress>.CreateSuccess(batchProgress);
+            }
+            catch (Exception e)
+            {
+                return Result<BatchProgress>.CreateFailure(new Error(500, e.Message));
+            }
+        }
+
+        private TimeSpan CalculateEstimatedRemainingTime(int progress, TimeSpan elapsedTime, int remainingCount)
+        {
+            if (progress == 0)
+                return TimeSpan.MaxValue;
+            else
+            {
+                double averageTimePerIpMilliseconds = elapsedTime.TotalMilliseconds / progress;
+                double estimatedRemainingTimeMilliseconds = averageTimePerIpMilliseconds * remainingCount;
+
+                return TimeSpan.FromMilliseconds(estimatedRemainingTimeMilliseconds);
+            }
+        }
+
+        private async Task BackgroundTask(Batch batch, List<string> ips)
+        {
+            using IServiceScope scope = _serviceProvider.CreateScope();
+            {
+                var repository = scope.ServiceProvider.GetRequiredService<IRepository<Batch>>();
+
                 try
                 {
-                    var ipProcessingStatus = ips.Select(ip => new { Key = ip, Value = false })
-                                .ToDictionary(pair => pair.Key, pair => pair.Value);
-
-                    var batch = new Batch
-                    {
-                        Id = batchId,
-                        StartTime = DateTime.Now,
-                        IpProcessingStatus = ipProcessingStatus
-                    };
-
-                    _batches.Add(batch);
+                    var ipsLocationResult = new List<GeolocationBatchResult>();
 
                     foreach (var ip in ips)
                     {
                         var result = await FetchGeolocation(ip);
+
+                        if (!result.Success)
+                            _logger.LogError($"{result.Error.ErrorCode}:{result.Error.ErrorMessage}");
+
+                        ipsLocationResult.Add(new GeolocationBatchResult
+                        {
+                            CountryCode = result.Data.Country.Ioc,
+                            CountryName = result.Data.Country.Name,
+                            IP = ip,
+                            Latitude = result.Data.Latitude.ToString(),
+                            Longitude = result.Data.Longitude.ToString(),
+                            TimeZone = result.Data.Country.Timezones.FirstOrDefault()
+                        });
+
+                        batch.Progress++;
+
+                        var elapsedTime = DateTime.Now - batch.StartTime;
+                        var estimatedRemainingTime = CalculateEstimatedRemainingTime(batch.Progress, elapsedTime, ips.Count - batch.Progress);
+                        batch.EstimateFinish = DateTime.Now.Add(estimatedRemainingTime);
+                        batch.BatchResult = JsonSerializer.Serialize(ipsLocationResult);
+
+                        repository.UpdateAsync(batch);
+                        await repository.SaveChangesAsync();
+
                         await Task.Delay(10000);
-
-                        if (result.Success)
-                            //logerr
-
-                            batch.IpProcessingStatus[ip] = true;
                     }
-
-                    _batches.Remove(batch);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    Console.WriteLine(ex.Message);//logger
+                    _logger.LogError($"{e.Message}");
                 }
-            });
-
-            return Result<string>.CreateSuccess(batchId);
+            }
+            scope.Dispose();
         }
 
-        public async Task<Result<BatchProgress>> GetBatchProgress(string batchId)
+        private string GetProgressString(Batch batch)
         {
-            var batch = _batches.FirstOrDefault(x => x.Id == batchId);
+            if (batch.TotalItems == 0)
+                return "0/0";
 
-            if (batch == null)
-                return Result<BatchProgress>.CreateFailure(new Error(404, "Batch not found"));
-
-            int totalCount = batch.IpProcessingStatus.Count;
-            int processedCount = batch.IpProcessingStatus.Count(kv => kv.Value);
-            int progress = processedCount * 100 / totalCount;
-
-            TimeSpan elapsedTime = DateTime.Now - batch.StartTime;
-            int remainingCount = batch.IpProcessingStatus.Count(kv => !kv.Value);
-
-            double averageTimePerProcessedIPMilliseconds = processedCount > 0 ? elapsedTime.TotalMilliseconds / processedCount : 0;
-            double estimatedRemainingTimeMilliseconds = averageTimePerProcessedIPMilliseconds * remainingCount;
-
-            var estimatedCompletionTime = DateTime.Now.AddMilliseconds(estimatedRemainingTimeMilliseconds);
-
-            var batchProgress = new BatchProgress
-            {
-                ExptectedTime = estimatedCompletionTime,
-                Progress = $"{progress}/100"
-            };
-
-            return Result<BatchProgress>.CreateSuccess(batchProgress);
+            double percentage = (double)batch.Progress / batch.TotalItems * 100;
+            return $"{batch.Progress}/{batch.TotalItems} ({percentage:F0}%)";
         }
     }
 }

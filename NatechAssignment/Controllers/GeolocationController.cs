@@ -15,6 +15,8 @@ namespace NatechAssignment.Controllers
             _geolocationManager = geolocationManager;
         }
 
+        //All the mappings could have been made with an AutoMapper
+
         [HttpGet("{ip}")]
         public async Task<IActionResult> Get(string ip)
         {
@@ -39,14 +41,14 @@ namespace NatechAssignment.Controllers
         [HttpPost()]
         public async Task<IActionResult> Get(List<string> ips)
         {
-            var result = await _geolocationManager.BatchProcessIPs(ips);
+            var result = await _geolocationManager.FetchMultipleIps(ips);
 
             if (!result.Success)
                 return StatusCode(result.Error.ErrorCode, result.Error);
 
             var response = new MultipleIpsResponse
             {
-                BatchId = result.Data,
+                BatchId = result.Data.ToString(),
                 Url = "BatchProgress"
             };
 
@@ -54,9 +56,9 @@ namespace NatechAssignment.Controllers
         }
 
         [HttpGet("BatchProgress/{batchId}")]
-        public async Task<IActionResult> GetBatchProgress(string batchId)
+        public async Task<IActionResult> GetBatchProgress(int batchId)
         {
-            var result = await _geolocationManager.GetBatchProgress(batchId);
+            var result = await _geolocationManager.GetBatchResult(batchId);
 
             if (!result.Success)
                 return StatusCode(result.Error.ErrorCode, result.Error);
@@ -64,8 +66,20 @@ namespace NatechAssignment.Controllers
             var response = new BatchProgressResponse
             {
                 Progress = result.Data.Progress,
-                ExptectedTime = result.Data.ExptectedTime.ToString("dd/MM/yyyy HH:mm:ss")
+                ExptectedTime = result.Data.ExptectedTime.ToString("dd/MM/yyyy HH:mm:ss"),
             };
+
+            response.GeolocationResponses = new List<GeolocationResponse>();
+
+            result.Data.CompletedIps.ForEach(x => response.GeolocationResponses.Add(new GeolocationResponse
+            {
+                CountryCode = x.CountryCode,
+                CountryName = x.CountryName,
+                Latitude = x.Latitude,
+                Longitude = x.Longitude,
+                TimeZone = x.TimeZone,
+                IP = x.IP
+            }));
 
             return Ok(response);
         }

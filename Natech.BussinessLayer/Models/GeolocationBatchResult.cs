@@ -1,12 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DataLayer.Models
+﻿namespace Natech.BussinessLayer.Models
 {
-    public class Geolocation
+    public class GeolocationBatchResult
     {
-        public int Id { get; set; }
-
-        [Required]
         public string IP { get; set; }
         public string CountryCode { get; set; }
         public string CountryName { get; set; }

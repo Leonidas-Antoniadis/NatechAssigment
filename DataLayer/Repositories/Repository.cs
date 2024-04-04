@@ -15,32 +15,23 @@ namespace Natech.DataLayer.Repositories
             _dbSet = _dbContext.Set<T>();
         }
 
-        public async Task<T> GetByIdAsync(int id)
-        {
-            return await _dbSet.FindAsync(id);
-        }
+        public async Task<T> GetByIdAsync(int id) =>
+            await _dbSet.FindAsync(id);
 
-        public async Task<IEnumerable<T>> GetAllAsync()
-        {
-            return await _dbSet.ToListAsync();
-        }
+        public async Task<IEnumerable<T>> GetAllAsync() =>
+            await _dbSet.ToListAsync();
 
-        public async Task AddAsync(T entity)
-        {
+        public async Task AddAsync(T entity) =>
             await _dbSet.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
-        }
 
-        public async Task UpdateAsync(T entity)
-        {
+        public void UpdateAsync(T entity) =>
             _dbSet.Update(entity);
-            await _dbContext.SaveChangesAsync();
-        }
 
-        public async Task DeleteAsync(T entity)
-        {
+        public Task SaveChangesAsync() =>
+            _dbContext.SaveChangesAsync();
+
+        public void DeleteAsync(T entity) =>
             _dbSet.Remove(entity);
-            await _dbContext.SaveChangesAsync();
-        }
+
     }
 }

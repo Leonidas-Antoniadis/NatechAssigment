@@ -1,5 +1,5 @@
-﻿using DataLayer.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Natech.DataLayer.Models;
 
 namespace DataLayer
 {
@@ -9,6 +9,6 @@ namespace DataLayer
         {
         }
 
-        public DbSet<Geolocation> Geolocation { get; set; }
+        public DbSet<Batch> Batches { get; set; }
     }
 }

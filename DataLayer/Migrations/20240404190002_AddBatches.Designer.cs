@@ -4,6 +4,7 @@ using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Natech.DataLayer.Migrations
 {
     [DbContext(typeof(NatechAssignmentContext))]
-    partial class NatechAssignmentContextModelSnapshot : ModelSnapshot
+    [Migration("20240404190002_AddBatches")]
+    partial class AddBatches
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,6 +39,9 @@ namespace Natech.DataLayer.Migrations
 
                     b.Property<DateTime>("EstimateFinish")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("Finished")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Progress")
                         .HasColumnType("int");
