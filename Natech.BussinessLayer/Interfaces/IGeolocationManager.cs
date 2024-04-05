@@ -5,8 +5,7 @@ namespace Natech.BussinessLayer.Interfaces
 {
     public interface IGeolocationManager
     {
-        Task<Result<Location>> FetchGeolocation(string ip);
-        Task<Result<int>> FetchMultipleIps(List<string> ips);
-        Task<Result<BatchProgress>> GetBatchResult(int batchId);
+        Task<Result<Location>> FetchFrom(string ip);
+        Task<Result<int>> SearchForMultiple(List<string> ips);
     }
 }

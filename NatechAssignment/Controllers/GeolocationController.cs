@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Natech.BussinessLayer.Interfaces;
+using Natech.Services.Interfaces;
 using NatechAssignment.DTOs;
 
 namespace NatechAssignment.Controllers
@@ -9,10 +10,12 @@ namespace NatechAssignment.Controllers
     public class GeolocationController : ControllerBase
     {
         private readonly IGeolocationManager _geolocationManager;
+        private readonly IBatchService _batchService;
 
-        public GeolocationController(IGeolocationManager geolocationManager)
+        public GeolocationController(IGeolocationManager geolocationManager, IBatchService batchService)
         {
             _geolocationManager = geolocationManager;
+            _batchService = batchService;
         }
 
         //All the mappings could have been made with an AutoMapper
@@ -20,7 +23,7 @@ namespace NatechAssignment.Controllers
         [HttpGet("{ip}")]
         public async Task<IActionResult> Get(string ip)
         {
-            var result = await _geolocationManager.FetchGeolocation(ip);
+            var result = await _geolocationManager.FetchFrom(ip);
 
             if (!result.Success)
                 return StatusCode(result.Error.ErrorCode, result.Error);
@@ -39,9 +42,9 @@ namespace NatechAssignment.Controllers
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Get(List<string> ips)
+        public async Task<IActionResult> SearchForMultiple(List<string> ips)
         {
-            var result = await _geolocationManager.FetchMultipleIps(ips);
+            var result = await _geolocationManager.SearchForMultiple(ips);
 
             if (!result.Success)
                 return StatusCode(result.Error.ErrorCode, result.Error);
@@ -49,16 +52,16 @@ namespace NatechAssignment.Controllers
             var response = new MultipleIpsResponse
             {
                 BatchId = result.Data.ToString(),
-                Url = "BatchProgress"
+                Url = nameof(GetBatchProgress)
             };
 
             return Ok(response);
         }
 
-        [HttpGet("BatchProgress/{batchId}")]
+        [HttpGet("GetBatchProgress/{batchId}")]
         public async Task<IActionResult> GetBatchProgress(int batchId)
         {
-            var result = await _geolocationManager.GetBatchResult(batchId);
+            var result = await _batchService.GetBatchResult(batchId);
 
             if (!result.Success)
                 return StatusCode(result.Error.ErrorCode, result.Error);
@@ -71,7 +74,7 @@ namespace NatechAssignment.Controllers
 
             response.GeolocationResponses = new List<GeolocationResponse>();
 
-            result.Data.CompletedIps.ForEach(x => response.GeolocationResponses.Add(new GeolocationResponse
+            result.Data.CompletedItems.ForEach(x => response.GeolocationResponses.Add(new GeolocationResponse
             {
                 CountryCode = x.CountryCode,
                 CountryName = x.CountryName,

@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataLayer\Natech.DataLayer.csproj" />
-    <ProjectReference Include="..\Natech.BussinessLayer\Natech.BussinessLayer.csproj" />
+    <ProjectReference Include="..\Natech.BussinessLayer\Natech.Services.csproj" />
   </ItemGroup>
 
 </Project>

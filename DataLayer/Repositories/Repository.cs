@@ -15,7 +15,7 @@ namespace Natech.DataLayer.Repositories
             _dbSet = _dbContext.Set<T>();
         }
 
-        public async Task<T> GetByIdAsync(int id) =>
+        public async Task<T> FindAsync(int id) =>
             await _dbSet.FindAsync(id);
 
         public async Task<IEnumerable<T>> GetAllAsync() =>

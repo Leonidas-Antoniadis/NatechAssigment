@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DataLayer\Natech.DataLayer.csproj" />
     <ProjectReference Include="..\Natech.Common\Natech.Common.csproj" />
-    <ProjectReference Include="..\Natech.Services\Natech.Services.csproj" />
   </ItemGroup>
 
 </Project>

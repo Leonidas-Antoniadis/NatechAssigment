@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Natech.BussinessLayer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1017d17648bf3ef8fb6264af08a6b251b1226320")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+823141a6645adac4aee9fe0b44f1977365836b6d")]
 [assembly: System.Reflection.AssemblyProductAttribute("Natech.BussinessLayer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Natech.BussinessLayer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
