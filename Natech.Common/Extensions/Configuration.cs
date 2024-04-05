@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Natech.Common.Models;
+using Natech.Common.DTOs;
 
 namespace Natech.Common.Extensions
 {

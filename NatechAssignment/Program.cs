@@ -1,9 +1,9 @@
-using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Natech.BussinessLayer;
 using Natech.BussinessLayer.Interfaces;
 using Natech.Common.Interfaces;
 using Natech.Common.Services;
+using Natech.DataLayer;
 using Natech.DataLayer.Interface;
 using Natech.DataLayer.Repositories;
 using Natech.Services;

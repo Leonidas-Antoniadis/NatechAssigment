@@ -1,4 +1,4 @@
-﻿namespace NatechAssignment.DTOs
+﻿namespace NatechAssignment.Responses
 {
     public class MultipleIpsResponse
     {

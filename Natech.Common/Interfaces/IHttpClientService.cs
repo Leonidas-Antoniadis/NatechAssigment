@@ -1,4 +1,4 @@
-﻿using NatechAssignment.Models;
+﻿using Natech.Common.DTOs;
 
 namespace Natech.Common.Interfaces
 {

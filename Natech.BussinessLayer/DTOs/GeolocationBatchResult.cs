@@ -1,4 +1,4 @@
-﻿namespace Natech.BussinessLayer.Models
+﻿namespace Natech.BussinessLayer.DTOs
 {
     public class GeolocationBatchResult
     {

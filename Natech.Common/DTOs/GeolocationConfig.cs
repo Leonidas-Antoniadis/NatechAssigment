@@ -1,4 +1,4 @@
-﻿namespace Natech.Common.Models
+﻿namespace Natech.Common.DTOs
 {
     public class GeolocationConfig
     {

@@ -1,5 +1,5 @@
-﻿using Natech.BussinessLayer.Models;
-using NatechAssignment.Models;
+﻿using Natech.BussinessLayer.DTOs;
+using Natech.Common.DTOs;
 
 namespace Natech.BussinessLayer.Interfaces
 {

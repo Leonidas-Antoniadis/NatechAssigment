@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NatechAssignment")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+823141a6645adac4aee9fe0b44f1977365836b6d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1dc8807107aaf442a9653c173a4dfdd91f242fa7")]
 [assembly: System.Reflection.AssemblyProductAttribute("NatechAssignment")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NatechAssignment")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

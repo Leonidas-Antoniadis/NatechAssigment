@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Natech.BussinessLayer.Interfaces;
 using Natech.Services.Interfaces;
-using NatechAssignment.DTOs;
+using NatechAssignment.Responses;
+
 
 namespace NatechAssignment.Controllers
 {

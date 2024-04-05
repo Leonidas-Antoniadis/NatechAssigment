@@ -1,4 +1,4 @@
-﻿namespace NatechAssignment.Models
+﻿namespace Natech.Common.DTOs
 {
     public class Result<T>
     {

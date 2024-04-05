@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Natech.Common.DTOs;
 using Natech.Common.Interfaces;
-using NatechAssignment.Models;
 using System.Text.Json;
 
 namespace Natech.Common.Services

@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Natech.BussinessLayer;
-using Natech.BussinessLayer.Models;
+using Natech.BussinessLayer.DTOs;
+using Natech.Common.DTOs;
 using Natech.DataLayer.Interface;
 using Natech.DataLayer.Models;
 using Natech.Services.Interfaces;
-using NatechAssignment.Models;
 using System.Text.Json;
 
 namespace Natech.Services
@@ -83,7 +83,7 @@ namespace Natech.Services
                 var batchProgress = new BatchProgress
                 {
                     ExptectedTime = (DateTime)batch.EstimateFinish,
-                    CompletedItems = !string.IsNullOrEmpty(batch.BatchResult) ? JsonSerializer.Deserialize<List<GeolocationBatchResult>>(batch.BatchResult) : null,
+                    CompletedItems = !string.IsNullOrEmpty(batch.BatchResult) ? JsonSerializer.Deserialize<List<GeolocationBatchResult>>(batch.BatchResult) : new List<GeolocationBatchResult>(),
                     Progress = GetProgressString(batch)
                 };
 

@@ -1,6 +1,6 @@
-﻿using Natech.BussinessLayer.Models;
+﻿using Natech.BussinessLayer.DTOs;
+using Natech.Common.DTOs;
 using Natech.DataLayer.Models;
-using NatechAssignment.Models;
 
 namespace Natech.Services.Interfaces
 {

@@ -1,5 +1,4 @@
-﻿using DataLayer;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Natech.DataLayer.Interface;
 
 namespace Natech.DataLayer.Repositories

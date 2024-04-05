@@ -1,13 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Natech.BussinessLayer.DTOs;
 using Natech.BussinessLayer.Interfaces;
-using Natech.BussinessLayer.Models;
+using Natech.Common.DTOs;
 using Natech.Common.Extensions;
 using Natech.Common.Interfaces;
-using Natech.Common.Models;
 using Natech.Services.Interfaces;
-using NatechAssignment.Models;
 using System.Text.Json;
 
 namespace Natech.BussinessLayer
