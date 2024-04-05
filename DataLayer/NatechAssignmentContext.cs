@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Natech.DataLayer.Models;
 
-namespace DataLayer
+namespace Natech.DataLayer
 {
     public class NatechAssignmentContext : DbContext
     {
