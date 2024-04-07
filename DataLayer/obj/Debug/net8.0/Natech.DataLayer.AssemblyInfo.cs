@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Natech.DataLayer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1dc8807107aaf442a9653c173a4dfdd91f242fa7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ec48dc0f8eff900398da3ea678ebcf230c12000b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Natech.DataLayer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Natech.DataLayer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -16,6 +16,7 @@ var config = builder.Configuration;
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<NatechAssignmentContext>(options =>
